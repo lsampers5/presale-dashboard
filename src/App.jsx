@@ -12,7 +12,21 @@ function fetchPresales(artist) {
 
   const [searchText, setSearchText] = useState('')
 
-
+  const grouped = presales.reduce((acc, presale) => {
+    if(!acc[presale.event_id]) {
+      acc[presale.event_id] = {
+        event_id: presale.event_id,
+        event_name: presale.event_name,
+        venue: presale.venue,
+        event_date_time: presale.event_date_time,
+        event_url: presale.event_url,
+        presales: []
+      }
+    } else {
+    }
+    acc[presale.event_id].presales.push(presale)
+    return acc
+  }, {})
   
   return (
     <>
@@ -24,11 +38,20 @@ function fetchPresales(artist) {
       <button onClick={() => fetchPresales(searchText)}>Search</button>
       <p>You typed: {searchText}</p>
       <p>Presales</p>
+
       <div>
-        {presales.map((presale) => (
-          <p key={presale.event_name + presale.start}>
-            {presale.event_name} - {presale.status} - {presale.start} to {presale.end}
-          </p>
+        {Object.values(grouped).map((group) => (
+          <div key={group.event_id}>
+            <h2>{group.event_name} at {group.venue}</h2>
+            <p>Show Time: {group.event_date_time}</p>
+            <a href={group.event_url} target="_blank">Buy Tickets</a>
+
+            {group.presales.map((presale) => (
+              <div key={presale.presale_name + presale.presale_start}>
+              <p>{presale.presale_name} - {presale.presale_status} - {presale.presale_start} - {presale.presale_end}</p>
+              </div>
+            ))}
+          </div>
         ))}
       </div>
     </>
